@@ -702,20 +702,25 @@ function Open() {
     };
   }, []);
   // ── Countdown
-  const targetDate = new Date("2026-06-20T00:00:00").getTime();
-  const getTimeRemaining = useCallback(() => {
-    const d = targetDate - Date.now();
-    return {
-      days: Math.max(0, Math.floor(d / 86400000)),
-      hours: Math.max(0, Math.floor((d % 86400000) / 3600000)),
-      minutes: Math.max(0, Math.floor((d % 3600000) / 60000)),
-    };
-  }, [targetDate]);
-  const [timeLeft, setTimeLeft] = useState(getTimeRemaining);
-  useEffect(() => {
-    const t = setInterval(() => setTimeLeft(getTimeRemaining()), 1000);
-    return () => clearInterval(t);
-  }, [getTimeRemaining]);
+ const targetDate = new Date("2026-06-20T00:00:00").getTime();
+
+const getTimeRemaining = useCallback(() => {
+  const d = targetDate - Date.now();
+  return {
+    days: Math.max(0, Math.floor(d / 86400000)),
+    hours: Math.max(0, Math.floor((d % 86400000) / 3600000)),
+    minutes: Math.max(0, Math.floor((d % 3600000) / 60000)),
+    seconds: Math.max(0, Math.floor((d % 60000) / 1000)),
+  };
+}, [targetDate]);
+
+const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+useEffect(() => {
+  setTimeLeft(getTimeRemaining());
+  const id = setInterval(() => setTimeLeft(getTimeRemaining()), 1000);
+  return () => clearInterval(id);
+}, [getTimeRemaining]);
 
   // ── Asset preloading
   useEffect(() => {
